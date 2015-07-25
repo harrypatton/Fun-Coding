@@ -32,15 +32,16 @@ namespace SumRootToLeafNumbers {
                 return 0;
             }
 
-            List<int> result = new List<int>(new int[1] { root.val });
+            List<int> parentResults = new List<int>(new int[1] { root.val });
             List<TreeNode> parentNodes = new List<TreeNode>();
+            List<int> leavesResults = new List<int>();
             parentNodes.Add(root);
 
             while (true) {
                 // find next level of childs and also calculate the sum.
                 List<TreeNode> nodes = new List<TreeNode>();
-                List<int> sums = new List<int>();
-                int indexInSum = 0;
+                List<int> results = new List<int>();
+                int indexInParentResults = 0;
 
                 foreach(var parentNode in parentNodes) {
                     // handle parent which has children.
@@ -48,21 +49,15 @@ namespace SumRootToLeafNumbers {
                         foreach (var child in new TreeNode[] { parentNode.left, parentNode.right }) {
                             if (child != null) {
                                 nodes.Add(child);
-                                sums.Add(result[indexInSum] * 10 + child.val);
+                                results.Add(parentResults[indexInParentResults] * 10 + child.val);
                             }
                         }
-
-                        indexInSum++;
                     }
-                }
+                    else { // this is leaf node. save the result.
+                        leavesResults.Add(parentResults[indexInParentResults]);
+                    }
 
-                // we need to add these leaves to the end so next iteration can find parent value using index.
-                foreach (var parentNode in parentNodes) {
-                    // handle parent without children later.
-                    if (parentNode.left == null && parentNode.right == null) {
-                        sums.Add(result[indexInSum]);
-                        indexInSum++;
-                    }                    
+                    indexInParentResults++;
                 }
 
                 if (!nodes.Any()) {
@@ -70,10 +65,10 @@ namespace SumRootToLeafNumbers {
                 }
 
                 parentNodes = nodes;
-                result = sums;
+                parentResults = results;
             }
 
-            return result.Sum();
+            return leavesResults.Sum();
         }
     }
 }
