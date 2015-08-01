@@ -7,72 +7,49 @@ using System.Threading.Tasks;
 namespace CombineSum3 {
     class Program {
         static void Main(string[] args) {
+            //var result = (new Solution()).FindBaseList(3, 15, 1);
             var result = (new Solution()).CombinationSum3(3, 15);
         }
     }
 
     public class Solution {
         public IList<IList<int>> CombinationSum3(int k, int n) {
-            IList<IList<int>> result = new List<IList<int>>();
+            return FindList(k, n, 1);
+        }
 
-            var baseList = FindNextOne(new int[k], 0, n);
-            if (baseList != null) {
-                result.Add(baseList);
+        public IList<IList<int>> FindList(int k, int n, int baseValue) {
+
+            List<IList<int>> list = new List<IList<int>>();
+
+            if (n < 1) {
+                return list;
             }
-            else {
-                return result;
-            }
-
-            // start the first to the one before last element.
-            for(int i = 0; i < k - 1; i++) {
-                int count = result.Count;
-
-                for (int j = 0; j < count; j++) {
-                    var list = result[j];
-
-                    while (true) {
-                        list = FindNextOne(list.ToArray(), i, n);
-
-                        if (list != null) {
-                            result.Add(list);
-                        }
-                        else {
-                            break;
-                        }
-                    }
+            
+            if (k == 1) {
+                if (n >= baseValue && n <= 9) {
+                    List<int> result = new List<int>(new int[] { n });
+                    list.Add(result);
+                    return list;
+                }
+                else {
+                    return list;
                 }
             }
 
-            return result;
-        }
+            for(int i = baseValue; i <= 10 - k; i++) {
+                var subResults = FindList(k - 1, n - i, i + 1);
 
-        public int[] FindNextOne(int[] baseList, int index, int n) {
+                if (subResults.Any()) {
 
-            // no candidate anymore.
-            if (baseList[index] == 9) {
-                return null;
+                    foreach(var subResult in subResults) {
+                        List<int> result = new List<int>(new int[] { i });
+                        result.AddRange(subResult);
+                        list.Add(result);
+                    }                    
+                }
             }
 
-            int totalCount = baseList.Length;
-            int[] result = new int[totalCount];
-
-            Array.Copy(baseList, result, totalCount);
-            result[index]++; // incease one number.
-            result[totalCount - 1] = 0;
-
-            for(int i = index + 1; i < totalCount - 1; i++) {
-                result[i] = result[i - 1] + 1;
-            }
-
-            int lastValue = (n - result.Sum());
-
-            if (lastValue > result[totalCount - 2] && lastValue <= 9) {
-                result[totalCount - 1] = lastValue;
-                return result.ToArray();
-            }
-            else {
-                return null;
-            }
-        }
+            return list;
+        }        
     }
 }
