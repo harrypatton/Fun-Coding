@@ -4,17 +4,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CourseSchedule {
+namespace CourseSchedule2 {
     class Program {
         static void Main(string[] args) {
+            int[,] prerequisites = new int[1, 2];
+            prerequisites[0, 0] = 1;
+            prerequisites[0, 1] = 0;
+
+            var result = (new Solution()).FindOrder(2, prerequisites);
         }
     }
 
     public class Solution {
-        public bool CanFinish(int numCourses, int[,] prerequisites) {
-
-            if (numCourses <= 1) {
-                return true;
+        public int[] FindOrder(int numCourses, int[,] prerequisites) {
+            if (numCourses <= 0) {
+                return new int[] { };
             }
 
             int[,] prerequisitesMatrix = new int[numCourses, numCourses];
@@ -27,6 +31,7 @@ namespace CourseSchedule {
             int courseCount = 0;
             int[] values = new int[numCourses];
             Queue<int> candidate = new Queue<int>();
+            List<int> courses = new List<int>();
 
             // init the values
             for (int columnIndex = 0; columnIndex < numCourses; columnIndex++) {
@@ -46,6 +51,7 @@ namespace CourseSchedule {
             while (candidate.Any()) {
                 int columnIndex = candidate.Dequeue();
                 courseCount++;
+                courses.Add(columnIndex);
 
                 values[columnIndex] = -1;
 
@@ -62,7 +68,7 @@ namespace CourseSchedule {
                 }
             }
 
-            return courseCount == numCourses;
+            return courseCount == numCourses ? courses.ToArray() : (new int[] { });
         }
     }
 }
