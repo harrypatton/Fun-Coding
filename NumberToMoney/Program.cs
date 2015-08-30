@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace NumberToMoney {
+
+    // In American English, there's no and in integral part.
+    // In all English, the hundred/thousand/million/billion doesn't need to be plural.
     class Program {
         static void Main(string[] args) {
             Solution s = new Solution();
@@ -87,7 +90,7 @@ namespace NumberToMoney {
                         result = subResult;
                     }
                     else {
-                        result = subResult + " " + KnownThousandTimeNumbers[kNumber] + (rest > 1 ? "s" : string.Empty) + " " + result;
+                        result = subResult + " " + KnownThousandTimeNumbers[kNumber] + " " + result;
                     }                    
                 }
 
@@ -107,7 +110,7 @@ namespace NumberToMoney {
 			string result = string.Empty;
 
 			if (hundred > 0){
-				result += KnownSmallNumbers[hundred] + (hundred == 1 ? " hundred" : " hundreds");
+				result += KnownSmallNumbers[hundred] + " hundred";
 			}
 			
 			int rest = value % 100;
